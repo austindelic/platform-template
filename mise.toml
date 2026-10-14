@@ -1,0 +1,24 @@
+[tools]
+node = "24.21.0"
+bun = "1.3.14"
+vp = "0.2.8"
+opentofu = "1.11.5"
+infisical = "0.43.132"
+
+[tasks.dev]
+run = 'WRANGLER_REGISTRY_PATH="$PWD/.wrangler/registry" MINIFLARE_REGISTRY_PATH="$PWD/.wrangler/registry" infisical run --env=dev -- bun --no-env-file run dev'
+
+[tasks."infra:up"]
+run = "bun run infra:up"
+
+[tasks."infra:down"]
+run = "bun run infra:down"
+
+[tasks."db:migrate"]
+run = "infisical run --env=dev -- bun --no-env-file run db:migrate"
+
+[tasks.check]
+run = "bun run check"
+
+[tasks.test]
+run = "bun run test"

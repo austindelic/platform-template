@@ -1,0 +1,29 @@
+name: platform-starter
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: platform_starter
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d platform_starter"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  rustfs:
+    image: rustfs/rustfs:latest
+    command: /data
+    environment:
+      RUSTFS_ACCESS_KEY: LOCALSTORAGE
+      RUSTFS_SECRET_KEY: local-storage-secret
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+    ports: ["127.0.0.1:59000:9000", "127.0.0.1:59001:9001"]
+    volumes: ["rustfs_data:/data"]
+volumes:
+  postgres_data:
+  rustfs_data:

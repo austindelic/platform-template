@@ -1,0 +1,10 @@
+:root { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #162026; background: #f5f7f8; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: #165d70; }
+button, input { font: inherit; }
+button { cursor: pointer; border: 0; border-radius: .55rem; padding: .7rem 1rem; color: white; background: #0f5669; }
+input { border: 1px solid #a9b8be; border-radius: .55rem; padding: .7rem; min-width: 0; }
+main { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+.card { background: white; border: 1px solid #dce5e8; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 8px 22px #16333b0b; }
+.muted { color: #587078; }

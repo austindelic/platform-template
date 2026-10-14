@@ -1,0 +1,10 @@
+{
+  "name": "@starter/storage",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {".": "./src/index.ts"},
+  "scripts": {"check": "tsc --noEmit"},
+  "dependencies": {"s3mini": "1.0.1"},
+  "devDependencies": {"typescript": "^6.0.3"}
+}

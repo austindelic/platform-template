@@ -1,0 +1,14 @@
+{
+  "name": "platform-starter-web-local",
+  "main": ".svelte-kit/cloudflare/_worker.js",
+  "compatibility_date": "2026-09-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {"directory": ".svelte-kit/cloudflare", "binding": "ASSETS"},
+  "hyperdrive": [{
+    "binding": "HYPERDRIVE",
+    "id": "00000000000000000000000000000001",
+    "localConnectionString": "postgres://postgres:postgres@127.0.0.1:55432/platform_starter"
+  }],
+  "services": [{"binding": "JOBS", "service": "platform-starter-jobs-local"}],
+  "vars": {"ENVIRONMENT": "local", "DOCS_URL": "http://127.0.0.1:4323"}
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@starter/db",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {".": "./src/index.ts", "./schema": "./src/schema/index.ts"},
+  "scripts": {
+    "check": "tsc --noEmit",
+    "generate": "drizzle-kit generate",
+    "migrate": "bun --no-env-file src/migrate.ts"
+  },
+  "dependencies": {"drizzle-orm": "^0.45.2", "pg": "^8.23.0"},
+  "devDependencies": {"@types/node": "^24.10.1", "@types/pg": "^8.21.0", "drizzle-kit": "^0.31.8", "typescript": "^6.0.3"}
+}

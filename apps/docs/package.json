@@ -1,0 +1,9 @@
+{
+  "name": "docs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {"dev": "astro dev --host 127.0.0.1 --port 4323", "build": "astro build", "check": "astro sync && tsc --noEmit"},
+  "dependencies": {"@astrojs/starlight": "^0.42.0", "astro": "^7.2.10", "sharp": "^0.35.3"},
+  "devDependencies": {"typescript": "^6.0.3"}
+}

@@ -1,0 +1,10 @@
+{
+  "name": "platform-starter-jobs-local",
+  "main": "src/coordinator/index.ts",
+  "compatibility_date": "2026-09-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "durable_objects": {"bindings": [{"name": "JOB_RUNNER", "class_name": "JobRunner"}]},
+  "migrations": [{"tag": "v1", "new_sqlite_classes": ["JobRunner"]}],
+  "vars": {"ENVIRONMENT": "local"}
+}
