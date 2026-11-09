@@ -1,10 +1,30 @@
 {
+  // Private jobs Worker: no public URL, reached only through the web app's JOBS service binding.
+  // Top level is local dev; env.staging and env.production repeat every binding (Wrangler does not
+  // inherit them). Durable Object migrations are top level and shared by every env.
   "name": "platform-starter-jobs-local",
   "main": "src/coordinator/index.ts",
   "compatibility_date": "2026-09-07",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
-  "durable_objects": {"bindings": [{"name": "JOB_RUNNER", "class_name": "JobRunner"}]},
-  "migrations": [{"tag": "v1", "new_sqlite_classes": ["JobRunner"]}],
-  "vars": {"ENVIRONMENT": "local"}
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false }
+  },
+  "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["JobRunner"] }],
+  "vars": { "ENVIRONMENT": "local" },
+  "env": {
+    "staging": {
+      "name": "platform-starter-jobs-staging",
+      "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
+      "vars": { "ENVIRONMENT": "staging" }
+    },
+    "production": {
+      "name": "platform-starter-jobs-production",
+      "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
+      "vars": { "ENVIRONMENT": "production" }
+    }
+  }
 }

@@ -5,20 +5,63 @@ vp = "0.2.8"
 opentofu = "1.11.5"
 infisical = "0.43.132"
 
+# Keep the Wrangler dev registry inside this repo, so the web app's JOBS binding finds this
+# repo's worker and never another project's local workers.
+[env]
+WRANGLER_REGISTRY_PATH = "{{config_root}}/.wrangler/registry"
+MINIFLARE_REGISTRY_PATH = "{{config_root}}/.wrangler/registry"
+
+# With an Infisical project (`.infisical.json`, from `infisical init`, pointing at the humans-only
+# <app>-dev project: one environment, slug main; infra/cloud/README.md), secrets come from it.
+# Without one, the apps read the ignored `.dev.vars` files and the defaults below.
 [tasks.dev]
-run = 'WRANGLER_REGISTRY_PATH="$PWD/.wrangler/registry" MINIFLARE_REGISTRY_PATH="$PWD/.wrangler/registry" infisical run --env=dev -- bun --no-env-file run dev'
+description = "Run the web app, worker and handbook"
+run = """
+if [ -f .infisical.json ]; then
+  exec infisical run --env=main -- bun --no-env-file run dev
+fi
+echo "No Infisical project: using apps/*/.dev.vars and local defaults." >&2
+exec bun --no-env-file run dev
+"""
 
 [tasks."infra:up"]
+description = "Start Postgres and S3-compatible storage, and create the local bucket"
 run = "bun run infra:up"
 
 [tasks."infra:down"]
 run = "bun run infra:down"
 
 [tasks."db:migrate"]
-run = "infisical run --env=dev -- bun --no-env-file run db:migrate"
+description = "Apply database migrations"
+run = """
+if [ -f .infisical.json ]; then
+  exec infisical run --env=main -- bun --no-env-file run db:migrate
+fi
+export DATABASE_URL="${DATABASE_URL:-postgres://postgres:postgres@127.0.0.1:55432/platform_starter}"
+echo "No Infisical project: migrating DATABASE_URL (the local database unless set)." >&2
+exec bun --no-env-file run db:migrate
+"""
 
 [tasks.check]
 run = "bun run check"
 
 [tasks.test]
 run = "bun run test"
+
+[tasks."test:e2e"]
+description = "Browser tests against the local web app"
+run = "bun run test:e2e"
+
+[tasks."infra:check"]
+description = "Format, validate and test the OpenTofu config offline (no credentials)"
+run = "bun run infra:check"
+
+# The agent and pre-push loop: what CI's checks job runs, minus the browser tests. check runs
+# before lint because it generates the .svelte-kit and .astro types that type-aware lint reads.
+[tasks.verify]
+description = "Format check, lint, types, unit tests and build"
+run = ["bun run fmt:check", "bun run check", "bun run lint", "bun run test", "bun run build"]
+
+[tasks.release]
+description = "Deploy one hosted environment: mise run release staging|production"
+run = "scripts/release.sh"

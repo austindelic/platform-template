@@ -14,7 +14,7 @@ services:
       timeout: 5s
       retries: 10
   rustfs:
-    image: rustfs/rustfs:latest
+    image: rustfs/rustfs:1.0.4
     command: /data
     environment:
       RUSTFS_ACCESS_KEY: LOCALSTORAGE

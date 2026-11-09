@@ -1,0 +1,69 @@
+name: Deploy
+# Staging on every merge to main; production only from a v* tag on main, so cutting the tag is
+# the release decision. Off until the repository variable DEPLOY_ENABLED is "true". OpenTofu
+# changes are applied by hand beforehand (infra/cloud/README.md). Production re-runs the checks
+# first. CI reads only the <app>-deploy-<env> Infisical project, over GitHub OIDC: the GitHub
+# environment holds INFISICAL_IDENTITY_ID and INFISICAL_PROJECT_ID, and no secret lives in GitHub.
+# Runtime secrets reach the Workers by Infisical's Workers sync, never through CI.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write # GitHub OIDC login to Infisical.
+concurrency:
+  # One deploy per environment at a time, never cancelled half-way.
+  group: deploy-${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging' }}
+  cancel-in-progress: false
+env:
+  MISE_DISABLE_TOOLS: infisical,opentofu
+  TARGET: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging' }}
+jobs:
+  checks:
+    if: vars.DEPLOY_ENABLED == 'true' && startsWith(github.ref, 'refs/tags/v')
+    uses: ./.github/workflows/checks.yml
+  deploy:
+    needs: checks
+    if: ${{ !cancelled() && !failure() && vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 30
+    # Settings, Environments: production accepts only v* tags and staging only main. Each holds
+    # its own identity and <app>-deploy-<env> project ID.
+    environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Production deploys only commits on main
+        if: env.TARGET == 'production'
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main ||
+            { echo "::error::${GITHUB_REF_NAME} is not on main."; exit 1; }
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          env: false
+          export_path: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: mise exec -- bun install --frozen-lockfile
+      # Exports this environment's deploy secrets, masked, to the steps after it.
+      - name: Read the deploy secrets from Infisical
+        uses: Infisical/secrets-action@d2e351f16c6ca20d17c85e6c992e04bdeb64e87d # v1.0.18
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          oidc-audience: https://app.infisical.com
+          project-id: ${{ vars.INFISICAL_PROJECT_ID }}
+          env-slug: main
+          secret-path: /
+      - name: Release
+        env:
+          SECRETS_FROM_ENV: "1"
+          RELEASE_HEALTH_URL: ${{ vars.RELEASE_HEALTH_URL }}
+        run: mise exec -- scripts/release.sh "$TARGET"

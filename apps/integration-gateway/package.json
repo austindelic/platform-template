@@ -1,1 +1,12 @@
-{"name":"@starter/integration-gateway","private":true,"version":"0.1.0","type":"module","scripts":{"check":"tsc --noEmit"},"devDependencies":{"typescript":"^6.0.3"}}
+{
+  "name": "@starter/integration-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,5 @@
+# Copy to backend.hcl (ignored by Git). The state bucket is private, created by hand outside this
+# configuration and shared across projects; each project and root gets its own key.
+bucket    = "YOUR_STATE_BUCKET"
+key       = "platform-starter/production.tfstate"
+endpoints = { s3 = "https://YOUR_32_CHARACTER_ACCOUNT_ID.r2.cloudflarestorage.com" }

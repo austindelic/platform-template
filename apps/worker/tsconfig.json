@@ -1,1 +1,9 @@
-{"extends":"../../tsconfig.json","compilerOptions":{"types":["@cloudflare/workers-types"],"module":"esnext","moduleResolution":"bundler"},"include":["src"]}
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types"],
+    "module": "esnext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src"]
+}

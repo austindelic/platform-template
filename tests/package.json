@@ -1,1 +1,7 @@
-{"name":"@starter/tests","private":true,"version":"0.1.0","type":"module","scripts":{}}
+{
+  "name": "@starter/tests",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {}
+}

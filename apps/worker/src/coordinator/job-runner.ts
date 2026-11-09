@@ -18,7 +18,9 @@ export class JobRunner {
     }
     if (request.method === "GET") {
       const status = await this.state.storage.get<ExampleJobState>("status");
-      return status ? Response.json(status) : Response.json({ error: "Not found" }, { status: 404 });
+      return status
+        ? Response.json(status)
+        : Response.json({ error: "Not found" }, { status: 404 });
     }
     return new Response(null, { status: 405 });
   }
@@ -29,9 +31,15 @@ export class JobRunner {
     await this.state.storage.put("status", { status: "running" } satisfies ExampleJobState);
     try {
       const result = await processJob(job);
-      await this.state.storage.put("status", { status: "complete", result } satisfies ExampleJobState);
+      await this.state.storage.put("status", {
+        status: "complete",
+        result,
+      } satisfies ExampleJobState);
     } catch {
-      await this.state.storage.put("status", { status: "failed", error: "Processing failed" } satisfies ExampleJobState);
+      await this.state.storage.put("status", {
+        status: "failed",
+        error: "Processing failed",
+      } satisfies ExampleJobState);
     } finally {
       await this.state.storage.delete("job");
     }

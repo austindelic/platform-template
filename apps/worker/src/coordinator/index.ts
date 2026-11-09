@@ -1,13 +1,15 @@
 export { JobRunner } from "./job-runner";
 import { decodeJob } from "../contracts";
 
-interface Env { JOB_RUNNER: DurableObjectNamespace }
+interface Env {
+  JOB_RUNNER: DurableObjectNamespace;
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    if (url.pathname === "/health" && request.method === "GET") {
-      return Response.json({ status: "ok" });
+    if ((url.pathname === "/healthz" || url.pathname === "/health") && request.method === "GET") {
+      return new Response("ok", { headers: { "content-type": "text/plain" } });
     }
     if (url.pathname === "/jobs" && request.method === "POST") {
       const job = decodeJob(await request.json().catch(() => null));

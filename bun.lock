@@ -105,6 +105,9 @@
     "scripts": {
       "name": "@starter/scripts",
       "version": "0.1.0",
+      "dependencies": {
+        "@starter/storage": "workspace:*",
+      },
     },
     "tests": {
       "name": "@starter/tests",
