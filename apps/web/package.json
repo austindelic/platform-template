@@ -9,9 +9,11 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
+    "@sentry/sveltekit": "^11.10.0",
     "@starter/db": "workspace:*",
     "@starter/storage": "workspace:*",
     "drizzle-orm": "^0.45.2",
+    "jose": "^6.2.10",
     "pg": "^8.23.0"
   },
   "devDependencies": {

@@ -1,11 +1,19 @@
-export { JobRunner } from "./job-runner";
+import { instrumentDurableObjectWithSentry, withSentry } from "@sentry/cloudflare";
 import { decodeJob } from "../contracts";
+import { JobRunner as JobRunnerBase } from "./job-runner";
 
-interface Env {
+export interface Env {
   JOB_RUNNER: DurableObjectNamespace;
+  ENVIRONMENT?: string;
+  /** Worker secret. Without it Sentry stays off; personal data is not sent either way. */
+  SENTRY_DSN?: string;
 }
 
-export default {
+const sentryOptions = (env: Env) => ({ dsn: env.SENTRY_DSN, environment: env.ENVIRONMENT });
+
+export const JobRunner = instrumentDurableObjectWithSentry(sentryOptions, JobRunnerBase);
+
+export default withSentry(sentryOptions, {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if ((url.pathname === "/healthz" || url.pathname === "/health") && request.method === "GET") {
@@ -24,4 +32,4 @@ export default {
     }
     return new Response("Not found", { status: 404 });
   },
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler<Env>);

@@ -4,6 +4,11 @@ locals {
   jobs_worker = "${var.project}-jobs-${local.environment}"
 }
 
+# The team domain (<team>.cloudflareaccess.com) issues the JWTs apps/web verifies.
+data "cloudflare_zero_trust_organization" "access" {
+  account_id = var.account_id
+}
+
 module "workspace" {
   source = "../../modules/workspace"
 

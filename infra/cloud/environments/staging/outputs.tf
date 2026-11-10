@@ -9,7 +9,10 @@ output "wrangler" {
       name          = local.web_worker
       hyperdrive_id = module.workspace.hyperdrive_id
       jobs_service  = local.jobs_worker
-      vars          = module.workspace.wrangler_vars
+      vars = merge(module.workspace.wrangler_vars, {
+        CF_ACCESS_TEAM_DOMAIN = "https://${data.cloudflare_zero_trust_organization.access.auth_domain}"
+        CF_ACCESS_AUD         = join(",", module.web_access.audiences)
+      })
     }
     worker = {
       name = local.jobs_worker

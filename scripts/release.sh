@@ -11,6 +11,7 @@
 # Infisical/secrets-action has already exported them and SECRETS_FROM_ENV=1 says so. By hand, set
 # INFISICAL_PROJECT_ID to the <app>-deploy-<env> project. With RELEASE_HEALTH_URL set (for example
 # https://app.example.com/healthz) the release fails unless that URL answers 200 "ok" afterwards.
+# A missing DATABASE_URL_DIRECT fails the release unless SKIP_MIGRATIONS=1.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -57,19 +58,29 @@ message="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)} ${version:0:12}"
 # Migrations must only add, so the Workers still running keep working while they apply.
 echo "== migrations (${environment})"
 # shellcheck disable=SC2016 # Expanded by the inner shell, inside with_secrets.
-with_secrets sh -c '
+with_secrets env SKIP_MIGRATIONS="${SKIP_MIGRATIONS:-}" sh -c '
   if [ -z "${DATABASE_URL_DIRECT:-}" ]; then
-    echo "DATABASE_URL_DIRECT is not set in the deploy project; skipping migrations." >&2
-    exit 0
+    # Shipping Workers ahead of their schema is worse than not shipping: fail unless told to skip.
+    if [ "${SKIP_MIGRATIONS:-}" = 1 ]; then
+      echo "SKIP_MIGRATIONS=1: deploying without migrations." >&2
+      exit 0
+    fi
+    echo "DATABASE_URL_DIRECT is not set in the deploy project. Add it, or set SKIP_MIGRATIONS=1 for an app with no database yet." >&2
+    exit 1
   fi
-  DATABASE_URL="$DATABASE_URL_DIRECT" bun run db:migrate
+  # sslrootcert=system is for libpq (psql, pg_dump); node-postgres reads it as a file path and
+  # already verifies against the public CAs, so it is dropped here (PlanetScale URLs carry it).
+  DATABASE_URL="$(printf "%s" "$DATABASE_URL_DIRECT" | sed -E "s/[&?]sslrootcert=system//")" bun run db:migrate
 '
 
 echo "== worker (${environment})"
 (cd apps/worker && with_secrets bunx wrangler deploy --env "$environment" --tag "${version:0:12}" --message "$message")
 
+# With SENTRY_AUTH_TOKEN, SENTRY_ORG and SENTRY_PROJECT in the deploy project, the build uploads
+# source maps under this commit's release name; without them it skips the upload.
 echo "== web (${environment})"
-(cd apps/web && bun run build && with_secrets bunx wrangler deploy --env "$environment" --tag "${version:0:12}" --message "$message")
+(cd apps/web && with_secrets env SENTRY_RELEASE="$version" bun run build &&
+  with_secrets bunx wrangler deploy --env "$environment" --tag "${version:0:12}" --message "$message")
 
 if [ -n "${RELEASE_HEALTH_URL:-}" ]; then
   echo "== health (${RELEASE_HEALTH_URL})"

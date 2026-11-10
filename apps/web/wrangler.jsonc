@@ -26,16 +26,30 @@
     "staging": {
       "name": "platform-starter-web-staging",
       "workers_dev": false,
+      // Run next to the database: one region hint cut staging page loads from ~2 s in a source repo.
+      // "placement": { "mode": "targeted", "region": "aws:<database region>" },
       "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "REPLACE_WITH_STAGING_HYPERDRIVE_ID" }],
       "services": [{ "binding": "JOBS", "service": "platform-starter-jobs-staging" }],
-      "vars": { "ENVIRONMENT": "staging", "DOCS_URL": "REPLACE_WITH_STAGING_DOCS_URL" }
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "DOCS_URL": "REPLACE_WITH_STAGING_DOCS_URL",
+        "CF_ACCESS_TEAM_DOMAIN": "REPLACE_WITH_STAGING_ACCESS_TEAM_DOMAIN",
+        "CF_ACCESS_AUD": "REPLACE_WITH_STAGING_ACCESS_AUD"
+      }
     },
     "production": {
       "name": "platform-starter-web-production",
       "workers_dev": false,
+      // Run next to the database: one region hint cut staging page loads from ~2 s in a source repo.
+      // "placement": { "mode": "targeted", "region": "aws:<database region>" },
       "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "REPLACE_WITH_PRODUCTION_HYPERDRIVE_ID" }],
       "services": [{ "binding": "JOBS", "service": "platform-starter-jobs-production" }],
-      "vars": { "ENVIRONMENT": "production", "DOCS_URL": "REPLACE_WITH_PRODUCTION_DOCS_URL" }
+      "vars": {
+        "ENVIRONMENT": "production",
+        "DOCS_URL": "REPLACE_WITH_PRODUCTION_DOCS_URL",
+        "CF_ACCESS_TEAM_DOMAIN": "REPLACE_WITH_PRODUCTION_ACCESS_TEAM_DOMAIN",
+        "CF_ACCESS_AUD": "REPLACE_WITH_PRODUCTION_ACCESS_AUD"
+      }
     }
   }
 }
