@@ -6,7 +6,7 @@ A generic starter extracted from the architecture of Next Frame and the repos bu
 - PostgreSQL through Drizzle and Hyperdrive, and R2 object storage
 - OpenTofu for Cloudflare resources, with encrypted state in R2
 - Infisical for secrets, read by CI over GitHub OIDC
-- GitHub Actions on Blacksmith runners
+- GitHub Actions: GitHub-hosted runners in this template, Blacksmith runners in org repos made from it
 - Pinned tools through mise
 
 New repos are made from this template with the `new-platform-repo` Claude skill, which also renames the identifiers listed in `template.json`.

@@ -1,6 +1,7 @@
 name: Checks
-# Runs on Blacksmith runners (billed to Blacksmith, not the org's Actions minutes; actions/cache is
-# served from Blacksmith's colocated cache). One sequential job that stops at the first failure,
+# Org repos run on Blacksmith (billed to Blacksmith, which serves actions/cache from its colocated
+# cache); personal-account repos, which Blacksmith does not run, use GitHub-hosted runners. The
+# new-platform-repo scaffold sets runs-on. One sequential job that stops at the first failure,
 # skipped for drafts and for docs- or OpenTofu-only changes (infra.yml checks those), cancelled
 # when a newer push to the same PR arrives. Callable from deploy.yml, where it is never cancelled.
 # Postgres runs as a service container on the same port as infra/local, so wrangler's local
@@ -31,7 +32,7 @@ env:
 jobs:
   checks:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     services:
       postgres:

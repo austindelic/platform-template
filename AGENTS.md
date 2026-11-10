@@ -27,16 +27,16 @@ Secrets come from Infisical (`.infisical.json`, ignored, env slug `main`), or fr
 
 Run the smallest loop that covers the change, and finish with `mise run verify` before handing work back:
 
-| Loop     | Command                                 | Covers                                                                                                                                                                     |
-| -------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Inner    | `mise run test`, `mise run check`       | Unit and config tests (including the wrangler binding guard), types (svelte-check, tsc, astro)                                                                             |
-| Pre-push | `mise run verify`                       | Workflow lint, fmt check, types, lint, tests, build (including `wrangler deploy --dry-run`)                                                                                |
-| Database | `mise run test:integration`             | Integration tests against a disposable Postgres (`mise run infra:up` first)                                                                                                |
-| Browser  | `mise run test:e2e`                     | Playwright at desktop and phone sizes: page errors, console errors, failed requests, sideways scroll                                                                       |
-| Infra    | `mise run infra:check`                  | `tofu fmt`, `validate` and mocked `tofu test`, offline                                                                                                                     |
-| CI       | `checks.yml`, `infra.yml` on Blacksmith | All of the above, with a Postgres service container                                                                                                                        |
-| Release  | `deploy.yml` → `scripts/release.sh`     | Staging on merge to `main`, production on a `v*` tag; fails on leftover `REPLACE_WITH_` values, a missing migration URL, a failing `/healthz`, or a host not behind Access |
-| Runtime  | cron in `apps/worker`                   | Better Stack heartbeat per schedule once monitoring is on; a missed ping opens an incident                                                                                 |
+| Loop     | Command                                                  | Covers                                                                                                                                                                     |
+| -------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inner    | `mise run test`, `mise run check`                        | Unit and config tests (including the wrangler binding guard), types (svelte-check, tsc, astro)                                                                             |
+| Pre-push | `mise run verify`                                        | Workflow lint, fmt check, types, lint, tests, build (including `wrangler deploy --dry-run`)                                                                                |
+| Database | `mise run test:integration`                              | Integration tests against a disposable Postgres (`mise run infra:up` first)                                                                                                |
+| Browser  | `mise run test:e2e`                                      | Playwright at desktop and phone sizes: page errors, console errors, failed requests, sideways scroll                                                                       |
+| Infra    | `mise run infra:check`                                   | `tofu fmt`, `validate` and mocked `tofu test`, offline                                                                                                                     |
+| CI       | `checks.yml`, `infra.yml` (Blacksmith or GitHub runners) | All of the above, with a Postgres service container                                                                                                                        |
+| Release  | `deploy.yml` → `scripts/release.sh`                      | Staging on merge to `main`, production on a `v*` tag; fails on leftover `REPLACE_WITH_` values, a missing migration URL, a failing `/healthz`, or a host not behind Access |
+| Runtime  | cron in `apps/worker`                                    | Better Stack heartbeat per schedule once monitoring is on; a missed ping opens an incident                                                                                 |
 
 When CI fails, reproduce it locally with the same `mise run` task before changing code. Do not skip, disable or loosen a check to get green.
 

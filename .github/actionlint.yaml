@@ -1,4 +1,5 @@
-# Blacksmith runner labels and repository/environment variables, so actionlint accepts them.
+# Blacksmith runner labels (used by repos scaffolded with --runner blacksmith) and repository and
+# environment variables, so actionlint accepts them.
 self-hosted-runner:
   labels:
     - blacksmith-2vcpu-ubuntu-2404
