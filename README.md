@@ -28,4 +28,11 @@ The example Items page exercises the path from a SvelteKit route to a server ope
 
 Follow [infra/cloud/README.md](infra/cloud/README.md): state bucket, OpenTofu apply, Infisical projects and OIDC identities, Wrangler environments, then the first deploy. Deploys stay off until the repository variable `DEPLOY_ENABLED` is `true`. After that, `main` deploys staging and a `v*` tag on `main` deploys production.
 
+Each of these ships switched off; the recipes are in `infra/cloud/README.md`:
+
+- **Key minting**: `manage_credentials`, then `infra/secrets`. Deploy tokens, R2 keys, app secrets and database roles get an expiry and a rotation schedule, and are written to Infisical without anyone handling them.
+- **Monitoring**: `infra/monitoring`. A Better Stack `/healthz` monitor, cron and backup heartbeats, and Sentry.
+- **Backups**: `backups_enabled` and `BACKUPS_ENABLED`. Nightly encrypted dumps to a locked R2 bucket, a copy in B2, and a weekly restore test.
+- **Queues**: `queues`. A queue and a dead-letter queue per key, with a guarded consumer.
+
 Before a real launch, add your authentication and access policy, define your domain schema and replace the example feature.

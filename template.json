@@ -1,6 +1,6 @@
 {
   "$comment": "Read by the new-platform-repo skill (scaffold.py). Keep in step with the files: every placeholder string and port below must appear in the template, and nothing else may use them.",
-  "version": 2,
+  "version": 3,
   "replace": {
     "platform-starter": "{slug}",
     "platform_starter": "{slug_underscore}",
