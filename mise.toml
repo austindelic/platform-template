@@ -84,6 +84,10 @@ run = [
   "bun run build",
 ]
 
+[tasks."backup:restore"]
+description = "Restore the newest production dump into a throwaway Postgres (needs BACKUP_AGE_IDENTITY_FILE)"
+run = "scripts/backup.sh restore production"
+
 [tasks.release]
 description = "Deploy one hosted environment: mise run release staging|production"
 run = "scripts/release.sh"

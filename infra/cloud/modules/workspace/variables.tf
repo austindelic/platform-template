@@ -61,3 +61,18 @@ variable "worker_domains" {
   default     = {}
   description = "Custom domains per Worker. Attach only after the first Wrangler deploy created the Worker and its Access application exists."
 }
+
+variable "backups" {
+  type = object({
+    daily_lock_days   = optional(number, 30)
+    daily_keep_days   = optional(number, 31)
+    monthly_lock_days = optional(number, 365)
+    monthly_keep_days = optional(number, 366)
+  })
+  default     = null
+  description = "Create the locked R2 backups bucket <project>-backups-<environment> for scripts/backup.sh. Null creates none. Locks stop a dump being deleted or overwritten, even by an admin token, until it is lock_days old; expiry removes it at keep_days."
+  validation {
+    condition     = var.backups == null || (try(var.backups.daily_keep_days > var.backups.daily_lock_days, false) && try(var.backups.monthly_keep_days > var.backups.monthly_lock_days, false))
+    error_message = "Keep each dump longer than it is locked, or expiry fails against the lock."
+  }
+}

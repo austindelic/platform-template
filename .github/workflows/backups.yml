@@ -1,0 +1,58 @@
+name: Backups
+# Nightly: encrypted database dump to the locked R2 backups bucket, then a copy of the R2 buckets to the versioned
+# B2 bucket. Each job pings a Better Stack heartbeat when it succeeds, so a run that never starts still alerts
+# (infra/monitoring, backups_enabled). The restore test is not here: it needs the age private key, which no CI
+# identity can read, so a person runs scripts/backup.sh restore from a laptop, weekly. Production only: the backups
+# identity is a Viewer on the Infisical project <app>-backups-prod and nothing else. Off until the repository
+# variable BACKUPS_ENABLED is "true". Scheduled runs avoid minute 0, when GitHub delays or drops the most.
+on:
+  schedule:
+    - cron: "17 16 * * *" # pick a quiet hour for the database
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write # GitHub OIDC login to Infisical.
+concurrency:
+  group: backups-production
+  cancel-in-progress: false
+env:
+  MISE_DISABLE_TOOLS: node,bun,vp,opentofu,infisical,actionlint,shellcheck
+  TARGET: production
+jobs:
+  backup:
+    if: vars.BACKUPS_ENABLED == 'true'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 60
+    # Its own GitHub environment, so backups run on schedules from main while production deploys accept only v* tags.
+    # Its variables are INFISICAL_IDENTITY_ID (a backups identity trusted only for this repository's `backups`
+    # environment) and INFISICAL_PROJECT_ID (<app>-backups-prod). That identity can read the backup write keys, the
+    # read-only database URL and the age public recipient, and nothing else: not app secrets, not the deploy token,
+    # not the age private key.
+    environment: backups
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          env: false
+          export_path: false
+      - name: Install age and rclone
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq age rclone
+      - name: Read the backup keys from Infisical over GitHub OIDC
+        # Exports every secret of the one project this identity can read into the job's environment, masked in logs.
+        uses: Infisical/secrets-action@d2e351f16c6ca20d17c85e6c992e04bdeb64e87d # v1.0.18
+        with:
+          method: oidc
+          identity-id: ${{ vars.INFISICAL_IDENTITY_ID }}
+          oidc-audience: https://app.infisical.com
+          project-id: ${{ vars.INFISICAL_PROJECT_ID }}
+          env-slug: main
+      - name: Dump the database
+        env:
+          SECRETS_FROM_ENV: "1"
+        run: mise exec -- scripts/backup.sh dump "$TARGET"
+      - name: Copy to Backblaze B2
+        env:
+          SECRETS_FROM_ENV: "1"
+        run: mise exec -- scripts/backup.sh copy "$TARGET"

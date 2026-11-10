@@ -38,3 +38,35 @@ run "rejects_unknown_environment" {
   }
   expect_failures = [var.environment]
 }
+
+run "backups_bucket_is_locked_and_expires_after_the_lock" {
+  command = plan
+  variables {
+    environment = "production"
+    backups     = {}
+  }
+  assert {
+    condition     = cloudflare_r2_bucket.backups[0].name == "platform-starter-backups-production"
+    error_message = "The backups bucket is <project>-backups-<environment>."
+  }
+  assert {
+    condition     = cloudflare_r2_bucket_lock.backups[0].rules[0].condition.max_age_seconds == 30 * 86400 && cloudflare_r2_bucket_lifecycle.backups[0].rules[1].delete_objects_transition.condition.max_age == 31 * 86400
+    error_message = "Daily dumps are locked 30 days and expire a day later."
+  }
+}
+
+run "no_backups_bucket_by_default" {
+  command = plan
+  assert {
+    condition     = length(cloudflare_r2_bucket.backups) == 0 && output.backups_bucket == null
+    error_message = "Backups are opt-in."
+  }
+}
+
+run "expiry_must_outlast_the_lock" {
+  command = plan
+  variables {
+    backups = { daily_lock_days = 30, daily_keep_days = 7 }
+  }
+  expect_failures = [var.backups]
+}

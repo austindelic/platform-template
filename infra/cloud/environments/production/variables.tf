@@ -132,3 +132,15 @@ variable "migration_role_ttl_days" {
   default     = 7
   description = "Lifetime of the minted migration role, in days. A release after it lapses fails at migrations: apply this root, then infra/secrets, and re-run."
 }
+
+variable "backups_enabled" {
+  type        = bool
+  default     = false
+  description = "Create the locked R2 backups bucket, and with manage_credentials mint its R2 key (and a read-only database role with planetscale), for .github/workflows/backups.yml."
+}
+
+variable "b2_bucket_name" {
+  type        = string
+  default     = null
+  description = "An existing versioned, Object Lock B2 bucket for the second copy (BACKUP_B2_BUCKET). With manage_credentials, mints a copy-only key for it. Null skips the copy."
+}

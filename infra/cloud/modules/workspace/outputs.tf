@@ -20,3 +20,8 @@ output "wrangler_vars" {
 output "worker_domains" {
   value = { for k, d in cloudflare_workers_custom_domain.worker : k => d.hostname }
 }
+
+output "backups_bucket" {
+  description = "The locked backups bucket, or null when backups are off."
+  value       = one(cloudflare_r2_bucket.backups[*].name)
+}

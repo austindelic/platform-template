@@ -48,3 +48,14 @@ Production repeats steps 1 to 8 with its own state key, Infisical projects and i
 Every plan and apply of an environment root replaces whatever tokens are due; follow it with `infra/secrets`. `tofu output credentials_expire` says when each expires.
 
 Edit the module or root, then run `mise run infra:check`. Add a `tests/*.tftest.hcl` run for new behaviour (mock the provider). After changing a provider pin, run `tofu providers lock -platform=linux_amd64 -platform=linux_arm64 -platform=darwin_arm64` in each root and commit the lock files. A first lock attempt can time out on the registry; run it again.
+
+## Backups (opt-in)
+
+When the app holds data worth keeping:
+
+1. In production, set `backups_enabled = true`, and `b2_bucket_name` for a second copy in another provider: an existing B2 bucket with versioning and Object Lock, in a separate account. Apply it, and with `manage_credentials` the backup keys are minted too. The `<project>-backups-production` bucket is locked: daily dumps can't be deleted for 30 days and monthly ones for a year, even with an admin token.
+2. Make an age key pair. The public recipient goes into `<app>-backups-prod` as `BACKUP_AGE_RECIPIENTS`. The private key goes into the password manager and onto paper, never Infisical. Apply `infra/secrets` with `backups_prod` set, so the R2 and B2 keys and the read-only database URL land in that project.
+3. Create a GitHub environment `backups` (branch `main`). Give it `INFISICAL_IDENTITY_ID`, a backups identity trusted only for this repo's `backups` environment and Viewer on `<app>-backups-prod` only, and `INFISICAL_PROJECT_ID`. Set the repository variable `BACKUPS_ENABLED=true`.
+4. Turn on the backup heartbeats in `infra/monitoring` (`backups_enabled`).
+
+`.github/workflows/backups.yml` dumps nightly (age-encrypted `pg_dump`) and copies the R2 buckets to B2 with `--max-delete`. The restore test needs the private key, so a person runs it weekly with `mise run backup:restore`. It restores the newest dump into a throwaway Postgres, prints `RESTORE_CHECK_SQL`, and fails if the dump is older than yesterday.

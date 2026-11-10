@@ -51,3 +51,8 @@ output "planetscale_branch" {
   description = "The PlanetScale branch the minted roles are on, or null."
   value       = one(module.credentials[*].planetscale_branch)
 }
+
+output "backups_bucket" {
+  description = "Where the nightly job writes encrypted dumps, or null."
+  value       = module.workspace.backups_bucket
+}

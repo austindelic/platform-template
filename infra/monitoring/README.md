@@ -2,13 +2,13 @@
 
 Production monitoring for this app on Better Stack and Sentry, applied by a person (state key `platform-starter/monitoring.tfstate`, same encrypted R2 bucket and passphrase as the other roots). CI runs only the offline checks.
 
-| Resource | Name | Starts |
-| --- | --- | --- |
-| Monitor on `<web_url>/healthz` (every 3 minutes, never follows redirects) | `<project>-prod-web` | paused (`enable_health_monitor`) |
-| Heartbeat for the jobs Worker's sweep cron (`HEARTBEAT_URL_SWEEP`) | `<project>-prod-sweep` | paused (`enable_cron_heartbeat`) |
-| Backup dump, copy and restore heartbeats | `<project>-prod-backup-*` | only with `backups_enabled` |
-| Sentry projects for web and the jobs Worker, with DSN keys | `<project>`, `<project>-jobs` | only with `sentry_organization` |
-| Status page entry | the project name | only with `public_status` and a page |
+| Resource                                                                  | Name                          | Starts                               |
+| ------------------------------------------------------------------------- | ----------------------------- | ------------------------------------ |
+| Monitor on `<web_url>/healthz` (every 3 minutes, never follows redirects) | `<project>-prod-web`          | paused (`enable_health_monitor`)     |
+| Heartbeat for the jobs Worker's sweep cron (`HEARTBEAT_URL_SWEEP`)        | `<project>-prod-sweep`        | paused (`enable_cron_heartbeat`)     |
+| Backup dump, copy and restore heartbeats                                  | `<project>-prod-backup-*`     | only with `backups_enabled`          |
+| Sentry projects for web and the jobs Worker, with DSN keys                | `<project>`, `<project>-jobs` | only with `sentry_organization`      |
+| Status page entry                                                         | the project name              | only with `public_status` and a page |
 
 Turn each check on only when the thing it watches is live. An Access login page answers 200, so `/healthz` needs its Access bypass (`machine_paths`) first, and the monitor is set never to follow a redirect.
 

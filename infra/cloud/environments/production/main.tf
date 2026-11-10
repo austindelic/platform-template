@@ -22,6 +22,7 @@ module "workspace" {
   project           = var.project
   environment       = local.environment
   bucket_location   = var.bucket_location
+  backups           = var.backups_enabled ? {} : null
   database          = local.database
   database_password = local.hyperdrive_password != null ? local.hyperdrive_password : var.database_password
   worker_domains = var.attach_worker_domains ? {
@@ -54,7 +55,8 @@ module "credentials" {
   project                  = var.project
   environment              = local.environment
   storage_bucket_name      = module.workspace.bucket_name
-  backups_bucket_name      = null
+  backups_bucket_name      = module.workspace.backups_bucket
+  b2_bucket_name           = var.backups_enabled ? var.b2_bucket_name : null
   app_secrets              = var.app_secrets
   deploy_permission_groups = coalesce(var.deploy_permission_groups, ["Workers Scripts Write", "Workers R2 Storage Write", "Hyperdrive Write", "Account Settings Read"])
   planetscale              = var.planetscale
