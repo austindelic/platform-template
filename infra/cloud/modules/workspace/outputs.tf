@@ -25,3 +25,8 @@ output "backups_bucket" {
   description = "The locked backups bucket, or null when backups are off."
   value       = one(cloudflare_r2_bucket.backups[*].name)
 }
+
+output "queues" {
+  description = "Queue and dead-letter queue name per key, for the wrangler queue bindings."
+  value       = { for k, q in cloudflare_queue.job : k => { queue = q.queue_name, dead_letter = cloudflare_queue.dead_letter[k].queue_name } }
+}

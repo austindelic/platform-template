@@ -59,3 +59,22 @@ When the app holds data worth keeping:
 4. Turn on the backup heartbeats in `infra/monitoring` (`backups_enabled`).
 
 `.github/workflows/backups.yml` dumps nightly (age-encrypted `pg_dump`) and copies the R2 buckets to B2 with `--max-delete`. The restore test needs the private key, so a person runs it weekly with `mise run backup:restore`. It restores the newest dump into a throwaway Postgres, prints `RESTORE_CHECK_SQL`, and fails if the dump is older than yesterday.
+
+## Queues (opt-in)
+
+`apps/worker/src/queues.ts` holds the message contracts and the consumer loop. Invalid messages are acked, failures retry with backoff and then go to the dead-letter queue, and `sendToQueue` throws when a binding is missing instead of dropping the message. To turn a queue on:
+
+1. Set `queues = ["jobs"]` in each environment and apply. That creates `<project>-jobs-<env>` and `<project>-jobs-dlq-<env>`, and the minted deploy token gains Queues Write.
+2. Add the bindings to **every** block of `apps/worker/wrangler.jsonc` (top level with `-local` names, then `env.staging` and `env.production`). `tests/config/wrangler.test.ts` fails if one block is missing them:
+
+   ```jsonc
+   "queues": {
+     "producers": [{ "binding": "JOBS_QUEUE", "queue": "platform-starter-jobs-staging" }],
+     "consumers": [{ "queue": "platform-starter-jobs-staging", "max_batch_size": 10, "max_retries": 3,
+                     "dead_letter_queue": "platform-starter-jobs-dlq-staging" }]
+   }
+   ```
+
+3. Add `JOBS_QUEUE: Queue` to the Worker's `Env`. Locally, `POST /__dev/enqueue` on the jobs Worker sends a message, because queues don't connect between `vite dev` and `wrangler dev`.
+
+Nothing consumes a dead-letter queue yet. Watch its depth in the Cloudflare dashboard, or add a consumer that logs and alerts before relying on one.

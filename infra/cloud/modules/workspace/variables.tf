@@ -76,3 +76,13 @@ variable "backups" {
     error_message = "Keep each dump longer than it is locked, or expiry fails against the lock."
   }
 }
+
+variable "queues" {
+  type        = set(string)
+  default     = []
+  description = "Queue keys (apps/worker/src/queues.ts QUEUES). Each gets <project>-<key>-<environment> and a dead-letter queue <project>-<key>-dlq-<environment>. Empty creates none."
+  validation {
+    condition     = alltrue([for q in var.queues : can(regex("^[a-z][a-z0-9-]*$", q))])
+    error_message = "Queue keys are lower case letters, digits and hyphens."
+  }
+}

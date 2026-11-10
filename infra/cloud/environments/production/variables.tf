@@ -144,3 +144,9 @@ variable "b2_bucket_name" {
   default     = null
   description = "An existing versioned, Object Lock B2 bucket for the second copy (BACKUP_B2_BUCKET). With manage_credentials, mints a copy-only key for it. Null skips the copy."
 }
+
+variable "queues" {
+  type        = set(string)
+  default     = []
+  description = "Queue keys for apps/worker (infra/cloud/README.md, Queues). Each gets a dead-letter queue; the minted deploy token gains Queues Write."
+}

@@ -132,3 +132,9 @@ variable "migration_role_ttl_days" {
   default     = 7
   description = "Lifetime of the minted migration role, in days. A release after it lapses fails at migrations: apply this root, then infra/secrets, and re-run."
 }
+
+variable "queues" {
+  type        = set(string)
+  default     = []
+  description = "Queue keys for apps/worker (infra/cloud/README.md, Queues). Each gets a dead-letter queue; the minted deploy token gains Queues Write."
+}

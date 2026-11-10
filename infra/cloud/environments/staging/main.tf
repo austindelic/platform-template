@@ -22,6 +22,7 @@ module "workspace" {
   project           = var.project
   environment       = local.environment
   bucket_location   = var.bucket_location
+  queues            = var.queues
   database          = local.database
   database_password = local.hyperdrive_password != null ? local.hyperdrive_password : var.database_password
   worker_domains = var.attach_worker_domains ? {
@@ -50,13 +51,16 @@ module "credentials" {
   source = "../../modules/credentials"
   count  = var.manage_credentials ? 1 : 0
 
-  account_id               = var.account_id
-  project                  = var.project
-  environment              = local.environment
-  storage_bucket_name      = module.workspace.bucket_name
-  backups_bucket_name      = null
-  app_secrets              = var.app_secrets
-  deploy_permission_groups = coalesce(var.deploy_permission_groups, ["Workers Scripts Write", "Workers R2 Storage Write", "Hyperdrive Write", "Account Settings Read"])
-  planetscale              = var.planetscale
-  migration_role_ttl_days  = var.migration_role_ttl_days
+  account_id          = var.account_id
+  project             = var.project
+  environment         = local.environment
+  storage_bucket_name = module.workspace.bucket_name
+  backups_bucket_name = null
+  app_secrets         = var.app_secrets
+  deploy_permission_groups = distinct(concat(
+    coalesce(var.deploy_permission_groups, ["Workers Scripts Write", "Workers R2 Storage Write", "Hyperdrive Write", "Account Settings Read"]),
+    length(var.queues) > 0 ? ["Queues Write"] : [],
+  ))
+  planetscale             = var.planetscale
+  migration_role_ttl_days = var.migration_role_ttl_days
 }

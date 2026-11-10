@@ -15,8 +15,9 @@ output "wrangler" {
       })
     }
     worker = {
-      name = local.jobs_worker
-      vars = module.workspace.wrangler_vars
+      name   = local.jobs_worker
+      vars   = module.workspace.wrangler_vars
+      queues = module.workspace.queues
     }
   }
 }

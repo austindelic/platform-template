@@ -70,3 +70,14 @@ run "expiry_must_outlast_the_lock" {
   }
   expect_failures = [var.backups]
 }
+
+run "each_queue_has_a_dead_letter_queue" {
+  command = plan
+  variables {
+    queues = ["jobs"]
+  }
+  assert {
+    condition     = cloudflare_queue.job["jobs"].queue_name == "platform-starter-jobs-staging" && cloudflare_queue.dead_letter["jobs"].queue_name == "platform-starter-jobs-dlq-staging"
+    error_message = "Queues are <project>-<key>-<env> with a -dlq- twin."
+  }
+}
