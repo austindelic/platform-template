@@ -14,16 +14,19 @@
   },
   "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["JobRunner"] }],
+  "triggers": { "crons": ["*/15 * * * *"] },
   "vars": { "ENVIRONMENT": "local" },
   "env": {
     "staging": {
       "name": "platform-starter-jobs-staging",
       "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
+      "triggers": { "crons": ["*/15 * * * *"] },
       "vars": { "ENVIRONMENT": "staging" }
     },
     "production": {
       "name": "platform-starter-jobs-production",
       "durable_objects": { "bindings": [{ "name": "JOB_RUNNER", "class_name": "JobRunner" }] },
+      "triggers": { "crons": ["*/15 * * * *"] },
       "vars": { "ENVIRONMENT": "production" }
     }
   }

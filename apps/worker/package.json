@@ -10,8 +10,5 @@
   },
   "dependencies": {
     "@sentry/cloudflare": "^11.10.0"
-  },
-  "devDependencies": {
-    "typescript": "^6.0.3"
   }
 }

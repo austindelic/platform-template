@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
-    "@starter/storage": "workspace:*"
+    "@starter/storage": "workspace:*",
+    "typescript": "^6.0.3"
   }
 }

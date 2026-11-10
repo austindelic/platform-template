@@ -61,9 +61,6 @@
       "dependencies": {
         "@sentry/cloudflare": "^11.10.0",
       },
-      "devDependencies": {
-        "typescript": "^6.0.3",
-      },
     },
     "infra/local": {
       "name": "@starter/local-infra",
@@ -112,6 +109,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@starter/storage": "workspace:*",
+        "typescript": "^6.0.3",
       },
     },
     "tests": {
@@ -120,6 +118,7 @@
       "dependencies": {
         "@starter/db": "workspace:*",
         "drizzle-orm": "^0.45.2",
+        "typescript": "^6.0.3",
       },
     },
   },

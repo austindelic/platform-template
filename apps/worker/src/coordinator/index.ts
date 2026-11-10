@@ -1,12 +1,16 @@
 import { instrumentDurableObjectWithSentry, withSentry } from "@sentry/cloudflare";
 import { decodeJob } from "../contracts";
+import { runSchedule } from "../schedules";
 import { JobRunner as JobRunnerBase } from "./job-runner";
+import { runScheduledTask } from "./sweep";
 
 export interface Env {
   JOB_RUNNER: DurableObjectNamespace;
   ENVIRONMENT?: string;
   /** Worker secret. Without it Sentry stays off; personal data is not sent either way. */
   SENTRY_DSN?: string;
+  /** Better Stack heartbeat for the sweep schedule (schedules.ts). Unset: no ping. */
+  HEARTBEAT_URL_SWEEP?: string;
 }
 
 const sentryOptions = (env: Env) => ({ dsn: env.SENTRY_DSN, environment: env.ENVIRONMENT });
@@ -31,5 +35,8 @@ export default withSentry(sentryOptions, {
       return env.JOB_RUNNER.get(env.JOB_RUNNER.idFromName(match[1])).fetch("https://job.internal/");
     }
     return new Response("Not found", { status: 404 });
+  },
+  async scheduled(controller: ScheduledController, env: Env): Promise<void> {
+    await runSchedule(controller.cron, env, (task) => runScheduledTask(task, env));
   },
 } satisfies ExportedHandler<Env>);
