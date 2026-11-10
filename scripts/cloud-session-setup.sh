@@ -12,6 +12,7 @@ problem() {
   exit 0
 }
 
+mise_version="2026.10.19" # The mise this setup was checked with.
 project="${CLAUDE_PROJECT_DIR:-$PWD}"
 bin_dir="${HOME}/.local/bin"
 shims="${MISE_DATA_DIR:-${HOME}/.local/share/mise}/shims"
@@ -19,7 +20,7 @@ export PATH="${bin_dir}:${shims}:${PATH}"
 
 if ! command -v mise > /dev/null; then
   command -v curl > /dev/null || problem "mise is not installed and curl is not available."
-  curl -fsSL https://mise.run | MISE_QUIET=1 sh > /dev/null 2>&1 || problem "could not install mise from https://mise.run."
+  curl -fsSL https://mise.run | MISE_VERSION="v${mise_version}" MISE_QUIET=1 sh > /dev/null 2>&1 || problem "could not install mise from https://mise.run."
 fi
 # Only what the checks need; infisical and opentofu are for humans and the infra job.
 (cd "$project" && mise trust --quiet mise.toml && mise install --quiet bun node vp) > /dev/null 2>&1 ||

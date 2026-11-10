@@ -17,6 +17,11 @@ MINIFLARE_REGISTRY_PATH = "{{config_root}}/.wrangler/registry"
 # With an Infisical project (`.infisical.json`, from `infisical init`, pointing at the humans-only
 # <app>-dev project: one environment, slug main; infra/cloud/README.md), secrets come from it.
 # Without one, the apps read the ignored `.dev.vars` files and the defaults below.
+# Agent and operator tools (ctx7, playwright-cli, rtk, gh) are pinned in mise.dev.toml, out of CI.
+[tasks."tools:setup"]
+description = "Install the developer tools from mise.dev.toml"
+run = "mise -E dev install"
+
 [tasks.dev]
 description = "Run the web app, worker and handbook"
 run = """

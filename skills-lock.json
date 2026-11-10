@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "find-docs": {
+      "source": ".agents/skills/find-docs",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/find-docs/SKILL.md",
+      "computedHash": "2fbe163721ab371351a904d209c32bfa0730a3f67e266c9525e8799d7394f36a"
+    },
+    "playwright-cli": {
+      "source": ".agents/skills/playwright-cli",
+      "sourceType": "local",
+      "skillPath": ".agents/skills/playwright-cli/SKILL.md",
+      "computedHash": "400a9f7cee2dd5a49f7772114b6fa377f365f88e872e8a1528b1e2c8c0e6e96c"
+    }
+  }
+}

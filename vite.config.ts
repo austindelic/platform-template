@@ -12,7 +12,8 @@ export default defineConfig({
   },
   fmt: {
     // drizzle-kit snapshots keep the layout the generator writes.
-    ignorePatterns: ["packages/db/migrations-postgres/meta/**"],
+    // Vendored skills keep their bytes so skills-lock.json hashes still match.
+    ignorePatterns: ["packages/db/migrations-postgres/meta/**", ".agents/**"],
     overrides: [
       {
         // Keep Wrangler configs readable by tools that parse strict JSON after stripping comments.
