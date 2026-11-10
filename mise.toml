@@ -4,6 +4,9 @@ bun = "1.3.14"
 vp = "0.2.8"
 opentofu = "1.11.5"
 infisical = "0.43.132"
+# Workflow lint (bun run lint:workflows; CI and mise run verify).
+actionlint = "1.7.12"
+shellcheck = "0.11.0"
 
 # Keep the Wrangler dev registry inside this repo, so the web app's JOBS binding finds this
 # repo's worker and never another project's local workers.
@@ -52,6 +55,13 @@ run = "bun run test"
 description = "Browser tests against the local web app"
 run = "bun run test:e2e"
 
+[tasks."test:integration"]
+description = "Database tests against TEST_DATABASE_URL (the local Postgres unless set)"
+run = """
+export TEST_DATABASE_URL="${TEST_DATABASE_URL:-postgres://postgres:postgres@127.0.0.1:55432/platform_starter}"
+exec bun --no-env-file run test:integration
+"""
+
 [tasks."infra:check"]
 description = "Format, validate and test the OpenTofu config offline (no credentials)"
 run = "bun run infra:check"
@@ -60,7 +70,14 @@ run = "bun run infra:check"
 # before lint because it generates the .svelte-kit and .astro types that type-aware lint reads.
 [tasks.verify]
 description = "Format check, lint, types, unit tests and build"
-run = ["bun run fmt:check", "bun run check", "bun run lint", "bun run test", "bun run build"]
+run = [
+  "bun run lint:workflows",
+  "bun run fmt:check",
+  "bun run check",
+  "bun run lint",
+  "bun run test",
+  "bun run build",
+]
 
 [tasks.release]
 description = "Deploy one hosted environment: mise run release staging|production"

@@ -18,7 +18,7 @@ concurrency:
   group: deploy-${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging' }}
   cancel-in-progress: false
 env:
-  MISE_DISABLE_TOOLS: infisical,opentofu
+  MISE_DISABLE_TOOLS: infisical,opentofu,actionlint,shellcheck
   TARGET: ${{ startsWith(github.ref, 'refs/tags/v') && 'production' || 'staging' }}
 jobs:
   checks:
@@ -67,3 +67,15 @@ jobs:
           SECRETS_FROM_ENV: "1"
           RELEASE_HEALTH_URL: ${{ vars.RELEASE_HEALTH_URL }}
         run: mise exec -- scripts/release.sh "$TARGET"
+      # The web host must never be public by accident: a signed-out request has to land on the
+      # Cloudflare Access login. Set the environment variable WEB_URL (https://<host>) to enable.
+      - name: Confirm the web host is behind Cloudflare Access
+        if: vars.WEB_URL != ''
+        env:
+          WEB_URL: ${{ vars.WEB_URL }}
+        run: |
+          location=$(curl -s -o /dev/null -w '%{redirect_url}' "$WEB_URL/")
+          case "$location" in
+            https://*.cloudflareaccess.com/*) echo "Protected by Access." ;;
+            *) echo "::error::$WEB_URL answered without the Access login (${location:-no redirect})"; exit 1 ;;
+          esac

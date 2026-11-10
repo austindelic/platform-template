@@ -1,5 +1,11 @@
-# Blacksmith runner labels, so actionlint accepts them.
+# Blacksmith runner labels and repository/environment variables, so actionlint accepts them.
 self-hosted-runner:
   labels:
     - blacksmith-2vcpu-ubuntu-2404
     - blacksmith-4vcpu-ubuntu-2404
+config-variables:
+  - DEPLOY_ENABLED
+  - INFISICAL_IDENTITY_ID
+  - INFISICAL_PROJECT_ID
+  - RELEASE_HEALTH_URL
+  - WEB_URL

@@ -2,7 +2,9 @@ name: Checks
 # Runs on Blacksmith runners (billed to Blacksmith, not the org's Actions minutes; actions/cache is
 # served from Blacksmith's colocated cache). One sequential job that stops at the first failure,
 # skipped for drafts and for docs- or OpenTofu-only changes (infra.yml checks those), cancelled
-# when a newer push to the same PR arrives. Callable from deploy.yml.
+# when a newer push to the same PR arrives. Callable from deploy.yml, where it is never cancelled.
+# Postgres runs as a service container on the same port as infra/local, so wrangler's local
+# Hyperdrive connection string and the integration tests work unchanged.
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -18,15 +20,28 @@ permissions:
   contents: read
 concurrency:
   group: checks-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
   # Only the tools these checks use.
   MISE_DISABLE_TOOLS: infisical,opentofu
+  DATABASE_URL: postgres://postgres:postgres@127.0.0.1:55432/platform_starter
+  TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:55432/platform_starter
 jobs:
   checks:
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: platform_starter
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d platform_starter"
+          --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,12 +56,17 @@ jobs:
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
           restore-keys: bun-${{ runner.os }}-
       - run: mise exec -- bun install --frozen-lockfile
+      - run: mise exec -- bun run lint:workflows
       - run: mise exec -- bun run fmt:check
       # check generates the .svelte-kit and .astro types that type-aware lint reads.
       - run: mise exec -- bun run check
       - run: mise exec -- bun run lint
       - run: mise exec -- bun run test
       - run: mise exec -- bun run build
+      - name: Database integration tests
+        run: |
+          mise exec -- bun run db:migrate
+          mise exec -- bun run test:integration
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
@@ -55,6 +75,8 @@ jobs:
         run: mise exec -- bunx playwright install --with-deps chromium
       - name: Browser tests
         run: mise exec -- bun run test:e2e
+        env:
+          E2E_WITH_DATABASE: "1"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:

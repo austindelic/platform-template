@@ -15,7 +15,7 @@ concurrency:
   group: infra-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 env:
-  MISE_DISABLE_TOOLS: node,bun,vp,infisical
+  MISE_DISABLE_TOOLS: node,bun,vp,infisical,actionlint,shellcheck
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.tofu-plugins
 jobs:
   opentofu:

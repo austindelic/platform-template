@@ -117,6 +117,10 @@
     "tests": {
       "name": "@starter/tests",
       "version": "0.1.0",
+      "dependencies": {
+        "@starter/db": "workspace:*",
+        "drizzle-orm": "^0.45.2",
+      },
     },
   },
   "catalog": {
