@@ -35,7 +35,7 @@ CI signs in with `Infisical/secrets-action` (`method: oidc`, audience `https://a
    infisical run --projectId=<infra project> --env=main -- tofu apply tfplan
    ```
 
-4. **Deploy credentials.** Mint a Cloudflare API token per environment (Workers Scripts Write plus whatever the Workers bind to), with an expiry. Put it in `<app>-deploy-<env>` as `CLOUDFLARE_API_TOKEN`, along with `CLOUDFLARE_ACCOUNT_ID` and `DATABASE_URL_DIRECT`. Prefer minting from OpenTofu (`cloudflare_account_token` with `expires_on` and `time_rotating`) in a humans-only secrets root over pasting by hand.
+4. **Deploy credentials, minted.** Set `manage_credentials = true` (plus `app_secrets` and, for PlanetScale, `planetscale`) and apply again, with a **minter** Cloudflare token: account-owned, with an expiry, Account API Tokens Write plus every permission it hands on. `modules/credentials` mints the deploy token and the bucket-scoped R2 key with `expires_on` and a 90-day `time_rotating` schedule, plus generated app secrets and dated database roles. Then apply `infra/secrets` ([its README](../secrets/README.md)), which writes them to `<app>-deploy-<env>` and the Worker folders of `<app>-runtime-<env>`. Without a minted migration role, add `DATABASE_URL_DIRECT` to the deploy project by hand.
 5. **Wrangler environments.** Copy `tofu output wrangler` into `env.staging` / `env.production` of `apps/web/wrangler.jsonc` and `apps/worker/wrangler.jsonc`, replacing every `REPLACE_WITH_` value. `scripts/release.sh` refuses to deploy while any remain.
 6. **Runtime secrets.** Add the Worker secrets to `<app>-runtime-<env>`, then connect the Infisical Cloudflare Workers sync for each Worker.
 7. **First deploy.** Run `mise run release staging` by hand, or set the repository variable `DEPLOY_ENABLED=true` and merge to `main`. Then set `attach_worker_domains = true` and apply again so the custom domain points at the Worker.
@@ -44,5 +44,7 @@ CI signs in with `Infisical/secrets-action` (`method: oidc`, audience `https://a
 Production repeats steps 1 to 8 with its own state key, Infisical projects and identity. Staging and production never share a project, token or identity.
 
 ## Changing infrastructure
+
+Every plan and apply of an environment root replaces whatever tokens are due; follow it with `infra/secrets`. `tofu output credentials_expire` says when each expires.
 
 Edit the module or root, then run `mise run infra:check`. Add a `tests/*.tftest.hcl` run for new behaviour (mock the provider). After changing a provider pin, run `tofu providers lock -platform=linux_amd64 -platform=linux_arm64 -platform=darwin_arm64` in each root and commit the lock files. A first lock attempt can time out on the registry; run it again.

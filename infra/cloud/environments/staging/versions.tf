@@ -35,11 +35,32 @@ terraform {
   }
 
   required_providers {
+    b2 = {
+      source  = "Backblaze/b2"
+      version = "~> 0.14.1"
+    }
     cloudflare = {
       source  = "cloudflare/cloudflare"
       version = "= 5.28.1"
+    }
+    planetscale = {
+      source  = "planetscale/planetscale"
+      version = "~> 1.18"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "= 3.7.2"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = "= 0.13.1"
     }
   }
 }
 
 provider "cloudflare" {} # Reads CLOUDFLARE_API_TOKEN from the environment.
+
+# Used only with manage_credentials and the matching inputs: PLANETSCALE_SERVICE_TOKEN_ID /
+# PLANETSCALE_SERVICE_TOKEN and B2_APPLICATION_KEY_ID / B2_APPLICATION_KEY from the environment.
+provider "planetscale" {}
+provider "b2" {}

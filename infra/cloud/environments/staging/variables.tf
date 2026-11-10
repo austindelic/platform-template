@@ -96,3 +96,39 @@ variable "attach_worker_domains" {
   default     = false
   description = "Attach the custom domain to the web Worker. Only after the first Wrangler deploy and with the Access application in place."
 }
+
+variable "manage_credentials" {
+  type        = bool
+  default     = false
+  description = "Mint this environment's Cloudflare deploy token, bucket-scoped R2 key, generated app secrets and (with planetscale) database roles, each with an expiry and rotation (modules/credentials), for infra/secrets to write to Infisical. Needs a minter token that holds every permission it hands on. Never in CI."
+}
+
+variable "app_secrets" {
+  type        = map(list(string))
+  default     = {}
+  description = "Generated app secrets and the Worker folders that get each, for example { SESSION_SECRET = [\"web\"] } (modules/credentials)."
+}
+
+variable "deploy_permission_groups" {
+  type        = list(string)
+  default     = null
+  description = "Cloudflare permission groups for the minted deploy token. Null uses the module default (Workers, R2, Hyperdrive, account settings)."
+}
+
+variable "planetscale" {
+  type = object({
+    organization     = string
+    database         = string
+    branch           = optional(string, "main")
+    database_name    = string
+    dedicated_branch = optional(bool, false)
+  })
+  default     = null
+  description = "PlanetScale branch for minted Hyperdrive and migration roles (with manage_credentials). Null keeps database.user and TF_VAR_database_password, and a DATABASE_URL_DIRECT set by hand."
+}
+
+variable "migration_role_ttl_days" {
+  type        = number
+  default     = 7
+  description = "Lifetime of the minted migration role, in days. A release after it lapses fails at migrations: apply this root, then infra/secrets, and re-run."
+}

@@ -5,7 +5,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - "infra/cloud/**"
+      - "infra/**"
       - "mise.toml"
       - ".github/workflows/infra.yml"
   workflow_dispatch:
@@ -33,5 +33,5 @@ jobs:
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .tofu-plugins
-          key: tofu-plugins-${{ runner.os }}-${{ hashFiles('infra/cloud/**/.terraform.lock.hcl') }}
+          key: tofu-plugins-${{ runner.os }}-${{ hashFiles('infra/**/.terraform.lock.hcl') }}
       - run: mkdir -p "$TF_PLUGIN_CACHE_DIR" && mise exec -- sh infra/cloud/check.sh

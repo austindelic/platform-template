@@ -30,3 +30,24 @@ output "service_token_client_secrets" {
   sensitive   = true
   value       = module.web_access.service_token_client_secrets
 }
+
+output "secrets" {
+  description = "Sensitive. Secret values per Infisical destination, for infra/secrets. Null until manage_credentials is applied."
+  sensitive   = true
+  value       = one(module.credentials[*].secrets)
+}
+
+output "secret_names" {
+  description = "Secret names per Infisical destination. Safe to print."
+  value       = one(module.credentials[*].secret_names)
+}
+
+output "credentials_expire" {
+  description = "When the minted tokens, keys and roles expire and are next replaced. Safe to print."
+  value       = one(module.credentials[*].expires)
+}
+
+output "planetscale_branch" {
+  description = "The PlanetScale branch the minted roles are on, or null."
+  value       = one(module.credentials[*].planetscale_branch)
+}
