@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars (ignored by Git). Identifiers only; tokens come from the environment
+# (BETTERUPTIME_API_TOKEN, SENTRY_AUTH_TOKEN, TF_VAR_state_passphrase).
+web_url = "https://app.example.com"
+# enable_health_monitor = true   # once production and the /healthz Access bypass are live
+# enable_cron_heartbeat = true   # once the sweep cron runs and HEARTBEAT_URL_SWEEP is on the Worker
+# backups_enabled       = true
+# sentry_organization   = "your-org"
+# sentry_team           = "your-team"
+# public_status          = true
+# status_page_id         = "000000"
+# status_page_section_id = 000000
