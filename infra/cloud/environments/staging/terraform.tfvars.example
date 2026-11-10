@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars (ignored by Git). Identifiers only: secrets come from the environment
+# (TF_VAR_state_passphrase, TF_VAR_database_password, CLOUDFLARE_API_TOKEN).
+account_id            = "YOUR_32_CHARACTER_ACCOUNT_ID"
+identity_provider_id  = "YOUR_ACCESS_GOOGLE_IDP_ID"
+allowed_email_domains = ["example.com"]
+web_hostname          = "app-staging.example.com"
+# web_zone_id           = "YOUR_ZONE_ID"
+# attach_worker_domains = true
+# database = { host = "db.example.com", name = "app", user = "app_hyperdrive" }

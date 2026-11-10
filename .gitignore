@@ -16,3 +16,12 @@ playwright-report/
 test-results/
 .bun-cache/
 .infisical.json
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+backend.hcl
+.tofu-plugins/
+.playwright-cli/
+.claude/worktrees/
+.claude/settings.local.json
+tfplan

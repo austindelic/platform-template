@@ -1,1 +1,6 @@
-{"name":"@starter/local-infra","private":true,"version":"0.1.0","scripts":{}}
+{
+  "name": "@starter/local-infra",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {}
+}

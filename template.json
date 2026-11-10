@@ -1,0 +1,58 @@
+{
+  "$comment": "Read by the new-platform-repo skill (scaffold.py). Keep in step with the files: every placeholder string and port below must appear in the template, and nothing else may use them.",
+  "version": 3,
+  "replace": {
+    "platform-starter": "{slug}",
+    "platform_starter": "{slug_underscore}",
+    "@starter/": "@{slug}/",
+    "Platform starter": "{title}"
+  },
+  "ports": {
+    "web": 5177,
+    "docs": 4323,
+    "worker": 8789,
+    "postgres": 55432,
+    "storage": 59000,
+    "storage_console": 59001
+  },
+  "exclude": [
+    ".git",
+    "node_modules",
+    ".svelte-kit",
+    ".astro",
+    ".wrangler",
+    ".terraform",
+    ".tofu-plugins",
+    "dist",
+    "playwright-report",
+    "test-results",
+    ".claude/worktrees",
+    ".claude/settings.local.json",
+    ".infisical.json",
+    "template.json"
+  ],
+  "text_extensions": [
+    ".ts",
+    ".js",
+    ".mjs",
+    ".svelte",
+    ".astro",
+    ".mdx",
+    ".md",
+    ".json",
+    ".jsonc",
+    ".toml",
+    ".yml",
+    ".yaml",
+    ".tf",
+    ".hcl",
+    ".sh",
+    ".sql",
+    ".html",
+    ".css",
+    ".svg",
+    ".example",
+    ".gitignore",
+    ".lock"
+  ]
+}

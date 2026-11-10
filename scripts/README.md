@@ -1,5 +1,12 @@
 # Operator scripts
 
-Use this boundary for repeatable local lifecycle, migration, backup, and cloud release commands. Keep deployment approvals, state locks, and backup/restore checks separate from application routes and background jobs. The starter provides package scripts for local services and migrations; add provider-specific release commands only after the new project has reviewed infrastructure and credentials.
+Repeatable local lifecycle and cloud release commands. Keep deployment approvals, state locks and backup checks here, separate from application routes and background jobs.
 
-Local dev and migrations run under `infisical run --env=dev` through `mise.toml`. Use new-project Infisical identities for future cloud scripts; do not reuse local login or a production identity in CI.
+- `release.sh staging|production`: migrations over the direct connection, then the jobs Worker, then the web Worker, with an optional `/healthz` check. Run by `.github/workflows/deploy.yml`, or by hand with `mise run release staging`. Secrets come from the `<app>-deploy-<env>` Infisical project (`infra/cloud/README.md`).
+- `push-secrets.sh staging|production [--dry-run]`: pushes each Worker's folder of the `<app>-runtime-<env>` project with `wrangler secret bulk` on stdin. Use it where the Infisical Workers sync is not connected; the Free plan has 10 syncs across every repo. Production needs `PUSH_PRODUCTION=1`.
+- `hosted.sh staging|production -- <command>`: runs one command against a hosted database and bucket. Production needs `HOSTED_PRODUCTION=1`.
+- `backup.sh dump|copy|restore <env>`: encrypted dumps to the locked bucket, a copy to B2, and the restore test (`infra/cloud/README.md`, Backups).
+- `local-storage.ts`: creates the local bucket after `docker compose up`. Runs from `bun run infra:up`, and refuses non-local endpoints.
+- `cloud-session-setup.sh`: the SessionStart hook for Claude Code cloud sessions. It installs the pinned tools and never fails the session.
+
+Never reuse a local Infisical login or a production identity in CI. CI signs in over GitHub OIDC with environment-scoped identities.

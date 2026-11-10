@@ -1,14 +1,21 @@
 {
   "name": "web",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vp dev --host 127.0.0.1 --port 5177 --strictPort",
     "build": "vp build",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
-  "dependencies": {"@starter/db": "workspace:*", "@starter/storage": "workspace:*", "drizzle-orm": "^0.45.2", "pg": "^8.23.0"},
+  "dependencies": {
+    "@sentry/sveltekit": "^11.10.0",
+    "@starter/db": "workspace:*",
+    "@starter/storage": "workspace:*",
+    "drizzle-orm": "^0.45.2",
+    "jose": "^6.2.10",
+    "pg": "^8.23.0"
+  },
   "devDependencies": {
     "@sveltejs/adapter-cloudflare": "7.2.9",
     "@sveltejs/kit": "^2.63.0",

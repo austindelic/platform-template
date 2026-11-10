@@ -1,3 +1,3 @@
 # Integration tests
 
-Use a disposable `TEST_DATABASE_URL` and isolated schema for database integration tests. Do not point tests at an application database. The example unit tests in each package run without external services.
+`mise run test:integration` runs `*.integration.test.ts` against `TEST_DATABASE_URL`, a disposable Postgres (the local one from `mise run infra:up`, or CI's service container). `helpers/postgres.ts` gives each suite its own schema with every migration applied and drops it afterwards. The config refuses to start without `TEST_DATABASE_URL`, and nothing here reads the application's `DATABASE_URL`.

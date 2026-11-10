@@ -1,0 +1,7 @@
+# Select with `mise -E dev` or export MISE_ENV=dev in your local shell.
+# Keep these out of the default CI/release tool installation.
+[tools]
+"npm:ctx7" = "0.5.10"
+"npm:@playwright/cli" = "0.1.18"
+rtk = "0.42.4"
+gh = "2.100.0"

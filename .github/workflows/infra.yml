@@ -1,0 +1,37 @@
+name: OpenTofu checks
+# Offline only: formatting, validation and mocked tests. No backend, credentials, Infisical
+# identity or Cloudflare account; applies are reviewed runs by hand (infra/cloud/README.md).
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "infra/**"
+      - "mise.toml"
+      - ".github/workflows/infra.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: infra-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+env:
+  MISE_DISABLE_TOOLS: node,bun,vp,infisical,actionlint,shellcheck
+  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.tofu-plugins
+jobs:
+  opentofu:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          env: false
+          export_path: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tofu-plugins
+          key: tofu-plugins-${{ runner.os }}-${{ hashFiles('infra/**/.terraform.lock.hcl') }}
+      - run: mkdir -p "$TF_PLUGIN_CACHE_DIR" && mise exec -- sh infra/cloud/check.sh

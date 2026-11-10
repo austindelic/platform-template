@@ -1,1 +1,11 @@
-{"name":"@starter/scripts","private":true,"version":"0.1.0","type":"module","scripts":{}}
+{
+  "name": "@starter/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "@starter/storage": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}

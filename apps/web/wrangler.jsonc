@@ -1,14 +1,55 @@
 {
+  // Top level: local dev only (`mise run dev`). Hosted settings live in env.staging and
+  // env.production; Wrangler does not inherit bindings or vars into an env, so each repeats them.
+  // Fill the REPLACE_WITH_ values from `tofu output wrangler` (infra/cloud/README.md, step 5);
+  // scripts/release.sh refuses to deploy while any remain.
   "name": "platform-starter-web-local",
   "main": ".svelte-kit/cloudflare/_worker.js",
   "compatibility_date": "2026-09-07",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {"directory": ".svelte-kit/cloudflare", "binding": "ASSETS"},
-  "hyperdrive": [{
-    "binding": "HYPERDRIVE",
-    "id": "00000000000000000000000000000001",
-    "localConnectionString": "postgres://postgres:postgres@127.0.0.1:55432/platform_starter"
-  }],
-  "services": [{"binding": "JOBS", "service": "platform-starter-jobs-local"}],
-  "vars": {"ENVIRONMENT": "local", "DOCS_URL": "http://127.0.0.1:4323"}
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false }
+  },
+  "assets": { "directory": ".svelte-kit/cloudflare", "binding": "ASSETS" },
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "00000000000000000000000000000001",
+      "localConnectionString": "postgres://postgres:postgres@127.0.0.1:55432/platform_starter"
+    }
+  ],
+  "services": [{ "binding": "JOBS", "service": "platform-starter-jobs-local" }],
+  "vars": { "ENVIRONMENT": "local", "DOCS_URL": "http://127.0.0.1:4323" },
+  "env": {
+    "staging": {
+      "name": "platform-starter-web-staging",
+      "workers_dev": false,
+      // Run next to the database: one region hint cut staging page loads from ~2 s in a source repo.
+      // "placement": { "mode": "targeted", "region": "aws:<database region>" },
+      "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "REPLACE_WITH_STAGING_HYPERDRIVE_ID" }],
+      "services": [{ "binding": "JOBS", "service": "platform-starter-jobs-staging" }],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "DOCS_URL": "REPLACE_WITH_STAGING_DOCS_URL",
+        "CF_ACCESS_TEAM_DOMAIN": "REPLACE_WITH_STAGING_ACCESS_TEAM_DOMAIN",
+        "CF_ACCESS_AUD": "REPLACE_WITH_STAGING_ACCESS_AUD"
+      }
+    },
+    "production": {
+      "name": "platform-starter-web-production",
+      "workers_dev": false,
+      // Run next to the database: one region hint cut staging page loads from ~2 s in a source repo.
+      // "placement": { "mode": "targeted", "region": "aws:<database region>" },
+      "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "REPLACE_WITH_PRODUCTION_HYPERDRIVE_ID" }],
+      "services": [{ "binding": "JOBS", "service": "platform-starter-jobs-production" }],
+      "vars": {
+        "ENVIRONMENT": "production",
+        "DOCS_URL": "REPLACE_WITH_PRODUCTION_DOCS_URL",
+        "CF_ACCESS_TEAM_DOMAIN": "REPLACE_WITH_PRODUCTION_ACCESS_TEAM_DOMAIN",
+        "CF_ACCESS_AUD": "REPLACE_WITH_PRODUCTION_ACCESS_AUD"
+      }
+    }
+  }
 }
