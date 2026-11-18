@@ -1,15 +1,32 @@
 # Platform starter
 
-A generic starter extracted from the architecture of Next Frame and the repos built on it. It keeps the same workspace boundaries without any product content, credentials or release identities. The stack:
+A starter for internal web apps on Cloudflare. It has the workspace layout, local and cloud loops, CI and secrets handling already wired up, and no product code, credentials or account IDs. The stack:
 
 - SvelteKit web app and a private jobs Worker (Durable Objects) on Cloudflare Workers, plus an Astro handbook
 - PostgreSQL through Drizzle and Hyperdrive, and R2 object storage
 - OpenTofu for Cloudflare resources, with encrypted state in R2
 - Infisical for secrets, read by CI over GitHub OIDC
-- GitHub Actions: GitHub-hosted runners in this template, Blacksmith runners in org repos made from it
+- GitHub Actions on GitHub-hosted runners, or Blacksmith runners for org repos
 - Pinned tools through mise
 
-New repos are made from this template with the `new-platform-repo` Claude skill, which also renames the identifiers listed in `template.json`.
+<!-- template-only:start -->
+
+## Create your project
+
+1. Click **Use this template** on GitHub and clone your new repo, or clone this one. Install mise, then run `mise trust && mise install` and `mise exec -- bun install`.
+2. Rename it and move its local ports so it can run beside other projects:
+
+   ```bash
+   mise exec -- bun scripts/create-repo.ts --slug acme-portal --in-place --dry-run
+   ```
+
+   Check the ports it prints, then run it again without `--dry-run`. Pass `--runner blacksmith` if your org runs CI on Blacksmith. It renames the identifiers listed in `template.json` (package names, database and bucket names, titles), shifts the six local ports to a free range, and records the template commit in `.template-origin.json`. It never pushes or touches cloud accounts. Review the result with `git diff` and commit it. To copy a checkout of the template into a new folder instead, pass `--dest ../acme-portal` in place of `--in-place`. Run it with `--help` for the other options.
+
+3. Put your own people or teams in `.github/CODEOWNERS`.
+
+The script removes this section, `template.json`, itself and the template's contributor docs from your project.
+
+<!-- template-only:end -->
 
 ## Start locally
 
@@ -36,3 +53,13 @@ Each of these ships switched off; the recipes are in `infra/cloud/README.md`:
 - **Queues**: `queues`. A queue and a dead-letter queue per key, with a guarded consumer.
 
 Before a real launch, add your authentication and access policy, define your domain schema and replace the example feature.
+
+## Licence
+
+[MIT](LICENSE). The agent skills in `.agents/skills` are adapted from Context7's `find-docs` skill and Microsoft's `playwright-cli` skill and keep their upstream licences.
+
+<!-- template-only:start -->
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to change the template and [SECURITY.md](SECURITY.md) to report a vulnerability.
+
+<!-- template-only:end -->
