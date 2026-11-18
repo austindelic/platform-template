@@ -32,7 +32,8 @@
     "template.json",
     "scripts/create-repo.ts",
     "CONTRIBUTING.md",
-    "SECURITY.md"
+    "SECURITY.md",
+    ".github/assets"
   ],
   "text_extensions": [
     ".ts",

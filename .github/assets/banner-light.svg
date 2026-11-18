@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440" role="img" aria-labelledby="title desc">
+  <title id="title">Platform starter</title>
+  <desc id="desc">A starter for internal web apps on Cloudflare: a SvelteKit web Worker behind Access, a private jobs Worker with Durable Objects, Postgres through Hyperdrive, R2 storage when a feature needs it, and a static Astro handbook.</desc>
+  <defs>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#E7E3DA"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#B9B2A4"/>
+    </marker>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F26B1D" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#0F8F86" stop-opacity="0.10"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="440" rx="24" fill="#FBFAF7"/>
+  <rect width="1280" height="440" rx="24" fill="url(#dots)"/>
+  <rect x="630" y="36" width="630" height="368" rx="20" fill="url(#glow)"/>
+
+  <g>
+    <rect x="64" y="76" width="44" height="44" rx="11" fill="#F26B1D"/>
+    <path d="M76 104 L86 92 L94 100 L104 88" fill="none" stroke="#FBFAF7" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="124" y="108" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" letter-spacing="1.5" fill="#5B616E">OPEN-SOURCE TEMPLATE</text>
+  </g>
+  <text x="62" y="196" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="64" font-weight="760" letter-spacing="-1.5" fill="#16181D">Platform starter</text>
+  <text x="64" y="240" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" fill="#5B616E">Internal web apps on Cloudflare, with the</text>
+  <text x="64" y="270" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" fill="#5B616E">boring, risky parts <tspan fill="#F26B1D" font-weight="650">already wired up.</tspan></text>
+  <rect x="64" y="318" width="91" height="30" rx="15" fill="#F3EFE7" stroke="#D9D4C9"/><text x="110" y="338" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="550" fill="#5B616E">OpenTofu</text><rect x="165" y="318" width="136" height="30" rx="15" fill="#F3EFE7" stroke="#D9D4C9"/><text x="233" y="338" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="550" fill="#5B616E">Infisical OIDC</text><rect x="311" y="318" width="136" height="30" rx="15" fill="#F3EFE7" stroke="#D9D4C9"/><text x="379" y="338" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="550" fill="#5B616E">GitHub Actions</text><rect x="457" y="318" width="60" height="30" rx="15" fill="#F3EFE7" stroke="#D9D4C9"/><text x="487" y="338" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="550" fill="#5B616E">mise</text><rect x="527" y="318" width="53" height="30" rx="15" fill="#F3EFE7" stroke="#D9D4C9"/><text x="554" y="338" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="550" fill="#5B616E">Bun</text>
+  
+  <path d="M745 118 V156" fill="none" stroke="#B9B2A4" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M830 189 H876" fill="none" stroke="#B9B2A4" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1060 189 H1086" fill="none" stroke="#B9B2A4" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+  <path d="M970 218 V286" fill="none" stroke="#B9B2A4" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1030 218 C1030 255 1150 250 1160 286" fill="none" stroke="#B9B2A4" stroke-width="2" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="660" y="60" width="170" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="676" y="85" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Browser</text>
+    <text x="676" y="104" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">staff</text>
+  </g>
+  <g>
+    <rect x="660" y="160" width="170" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="676" y="185" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Access</text>
+    <text x="676" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">JWT check</text>
+  </g>
+  <g>
+    <rect x="880" y="160" width="180" height="58" rx="12" fill="#FFFFFF" stroke="#F26B1D" stroke-width="2"/>
+    <text x="896" y="185" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Web Worker</text>
+    <text x="896" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">SvelteKit</text>
+  </g>
+  <g>
+    <rect x="1090" y="160" width="160" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="1106" y="185" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Jobs Worker</text>
+    <text x="1106" y="204" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">Durable Objects</text>
+  </g>
+  <g>
+    <rect x="880" y="290" width="180" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="896" y="315" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Postgres</text>
+    <text x="896" y="334" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">Drizzle · Hyperdrive</text>
+  </g>
+  <g>
+    <rect x="1090" y="290" width="160" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="1106" y="315" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">R2</text>
+    <text x="1106" y="334" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">when you need it</text>
+  </g>
+  <g>
+    <rect x="660" y="290" width="170" height="58" rx="12" fill="#FFFFFF" stroke="#D9D4C9" stroke-width="1.5"/>
+    <text x="676" y="315" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="650" fill="#16181D">Handbook</text>
+    <text x="676" y="334" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#5B616E">Astro · static</text>
+  </g>
+</svg>

@@ -17,7 +17,8 @@
  * avoid, default the parent folders of the template and the destination), --dry-run.
  *
  * It exits non-zero if a template identifier or port survives. The tracked files in template.json's
- * exclude list (template.json, this script, CONTRIBUTING.md, SECURITY.md) are not carried over.
+ * exclude list (template.json, this script, CONTRIBUTING.md, SECURITY.md, the README banner)
+ * are not carried over.
  */
 import { execFileSync } from "node:child_process";
 import {
@@ -273,11 +274,16 @@ const leftovers = files.filter((rel) => {
 });
 
 if (inPlace) {
-  // Template-only files (template.json, this script, the template's own contributor docs) are
+  // Template-only files (template.json, this script, contributor docs, README banner) are
   // the tracked entries of the exclude list. Untracked entries such as node_modules stay.
   const tracked = git(["ls-files", "-z", "--", ...manifest.exclude], template).split("\0");
-  for (const rel of tracked.filter((r) => manifest.exclude.includes(r)))
+  const templateOnly = (rel: string) =>
+    manifest.exclude.some((e) => rel === e || rel.startsWith(`${e}/`));
+  for (const rel of tracked.filter(templateOnly)) {
     rmSync(join(template, rel));
+    const dir = dirname(join(template, rel));
+    if (dir !== template && readdirSync(dir).length === 0) rmSync(dir, { recursive: true });
+  }
   console.log("Rewritten in place. Review with `git diff`, then commit.");
 } else {
   git(["init", "-q", "-b", "main"], dest);
