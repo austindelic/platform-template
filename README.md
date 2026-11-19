@@ -18,7 +18,9 @@
 </p>
 
 <p align="center">
-  <a href="#create-your-project"><b>Create your project</b></a> ·
+  <a href="#in-plain-english"><b>New here? Start with the plain-English tour</b></a>
+  <br>
+  <a href="#create-your-project">Create your project</a> ·
   <a href="#start-locally">Start locally</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#from-laptop-to-production">Release flow</a> ·
@@ -29,6 +31,113 @@
 <!-- template-only:end -->
 
 # Platform starter
+
+> **In one sentence:** a ready-made foundation for private web apps that only your team can open, with the sign-in, data storage, safety checks and going-live steps already built.
+
+## In plain English
+
+### What is it?
+
+Building a work tool for your team is a lot like building a house. Most of the effort goes into things nobody notices when they're done right: the foundations, the locks, the wiring and the plumbing. When they're done wrong, you find out at the worst possible moment.
+
+This project is a house where all of that is already built and inspected. You decide what the rooms are for, which means the screens and features your team needs.
+
+| In a house 🏠                                | In this project 💻                                               | Already done?        |
+| -------------------------------------------- | ---------------------------------------------------------------- | -------------------- |
+| A front door with a security guard           | Only your staff can get in, using their work Google account      | ✅                   |
+| Filing cabinets                              | A database that keeps your information safe and organised        | ✅                   |
+| A storeroom                                  | A place for files like photos, PDFs and spreadsheets             | ✅                   |
+| A back office that works while you're asleep | Background jobs that run on a schedule, every 15 minutes         | ✅                   |
+| A safe for the keys                          | Passwords and access keys locked away, never written in the code | ✅                   |
+| A building inspector                         | Automatic checks before every change goes live                   | ✅                   |
+| The rooms and furniture                      | **Your app's actual features**                                   | ✏️ This is your part |
+
+### What happens when someone opens the app
+
+```mermaid
+flowchart LR
+    P(["👤 A person on your team"]) --> G{{"🛡️ Security guard<br/>Are you on the staff list?"}}
+    G -->|"No"| X(["🚫 Turned away"])
+    G -->|"Yes"| APP["🖥️ Your app"]
+    APP <--> DB[("🗄️ Filing cabinet<br/>your data")]
+    APP <--> FS[("📦 Storeroom<br/>your files")]
+    APP -.->|"hands off slow tasks"| BG["⚙️ Back office<br/>works in the background"]
+```
+
+The security guard is [Cloudflare Access](https://www.cloudflare.com/zero-trust/products/access/). It checks every visit before your app sees it. If the app is online but the guard hasn't been set up yet, it turns everyone away instead of letting everyone in. That way a missed setup step can't leave the door open.
+
+### Who is it for?
+
+- **Teams that need an internal tool**, like a client tracker, an approvals queue, a stock list or a reporting dashboard, and want it to be safe from day one.
+- **Developers** who'd rather spend their first week on the product than on setup.
+- **Non-technical founders and managers** who are handing the build to a developer, an agency or an AI coding assistant, and want it to start on solid ground.
+
+It's not a finished app you can use straight away. It's the foundation you build one on.
+
+### From idea to live app
+
+Every change goes through the same stages. Each stage has checks, so problems are caught early, when they're cheap to fix.
+
+```mermaid
+flowchart LR
+    A["1️⃣ <b>Copy</b><br/>Make your own<br/>copy and name it"] --> B["2️⃣ <b>Build</b><br/>Add your features on<br/>your own computer"]
+    B --> C["3️⃣ <b>Check</b><br/>Robots test<br/>every change"]
+    C --> D["4️⃣ <b>Rehearse</b><br/>A private practice copy<br/>called <i>staging</i>"]
+    D --> E["5️⃣ <b>Go live</b><br/>The real app your team<br/>uses, <i>production</i>"]
+    C -.->|"something's wrong"| B
+```
+
+- **Nothing goes live by accident.** Publishing is switched off until someone deliberately turns it on.
+- **The practice copy comes first.** Every change runs on staging before it can reach the real app.
+- **The app checks itself after every release.** If it isn't healthy, or the security guard isn't in place, the release stops and says why.
+
+### How your information stays safe
+
+```mermaid
+flowchart LR
+    V["🔐 <b>Vault</b> (Infisical)<br/>passwords and keys"] -->|"handed over<br/>only when needed"| APP["🖥️ Your app"]
+    V -.->|"never copied into"| CODE["🚫 The code<br/>or GitHub"]
+    APP --> DATA[("🗄️ Your data")]
+    DATA -->|"every night,<br/>encrypted"| BK["💾 Locked backup<br/><i>once switched on</i>"]
+    BK --> B2["💾 Second copy<br/>at another company"]
+    BK -->|"every week"| T["✅ Test that the<br/>backup really restores"]
+```
+
+- **Keys expire.** When automatic key management is turned on, every access key has an expiry date and is replaced on a schedule, so an old leaked key soon stops working.
+- **Backups can't be deleted early.** When backups are on, they're locked for 30 days (monthly ones for a year), even against an administrator. A mistake or a break-in can't wipe them.
+- **Each stage has its own keys.** The practice copy and the real app never share passwords.
+
+### I don't write code. Can I still use this?
+
+Yes, with help. The usual routes:
+
+1. **Give it to a developer or agency.** Send them this page. The technical half below has everything they need, and they'll start from tested foundations instead of a blank page.
+2. **Use an AI coding assistant**, like Claude Code, Cursor or GitHub Copilot. The project ships with [AGENTS.md](AGENTS.md), a rulebook these assistants read automatically. It tells them how the project fits together, which checks to run, and what they must never do on their own, such as publishing the app or deleting files without asking.
+
+Either way, a person has the final say. Changes are proposed, then a person reviews and approves them before anything goes live.
+
+### Words you'll see
+
+| Word                    | What it means                                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- |
+| **Template**            | A starting point you copy. Your copy is yours, and changing it never changes the original             |
+| **Repository (repo)**   | The folder holding all of a project's code and its full history, usually stored on GitHub             |
+| **Cloudflare**          | The company whose computers run the app. It also provides the security guard and the storeroom        |
+| **Worker**              | A small program running on Cloudflare. This project has two: the app itself and the background office |
+| **Database**            | Where the app keeps structured information, like a set of very well-organised spreadsheets            |
+| **Migration**           | A recorded change to how the database is laid out, applied in order so every copy stays in step       |
+| **Staging**             | A private practice copy of the app, used to try changes before the real one                           |
+| **Production**          | The real, live app your team uses                                                                     |
+| **Secrets**             | Passwords and access keys the app needs. They live in Infisical, a vault, and never in the code       |
+| **CI (GitHub Actions)** | The robots that run the checks automatically every time someone proposes a change                     |
+| **Deploy / release**    | Publishing a new version of the app                                                                   |
+| **Local**               | Running on your own computer, for building and trying things out                                      |
+
+---
+
+## For developers
+
+Everything from here on is the technical reference.
 
 A starter for internal web apps on Cloudflare. The parts that usually take a week and go wrong quietly are already done and tested: staff sign-in through Cloudflare Access, a private background Worker, migrations, encrypted infrastructure state, secrets that CI reads without storing anything in GitHub, and a release that checks itself. There's no product code, credentials or account IDs, just one small example feature showing where your code goes.
 
