@@ -29,7 +29,11 @@
     ".claude/worktrees",
     ".claude/settings.local.json",
     ".infisical.json",
-    "template.json"
+    "template.json",
+    "scripts/create-repo.ts",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    ".github/assets"
   ],
   "text_extensions": [
     ".ts",
